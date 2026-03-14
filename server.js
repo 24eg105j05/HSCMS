@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const mongoose = require("mongoose");
 
 const app = express();
 
@@ -7,97 +8,146 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-/* IN-MEMORY DATA STORAGE */
+/* MongoDB Connection */
 
-let sensors = [];
-let cameras = [];
-let networks = [];
+mongoose.connect(
+"mongodb+srv://24eg105j05:Karthik_x25@hscms.wxkuwvr.mongodb.net/hscms?retryWrites=true&w=majority"
+)
 
-/* SENSOR ALERT */
+.then(()=>console.log("MongoDB Connected"))
+.catch(err=>console.log(err));
 
-app.post("/sensor", (req, res) => {
 
-  const { sensor_id, sensor_type, alert_level } = req.body;
+/* Schemas */
 
-  sensors.push({
-    id: sensors.length + 1,
-    sensor_id,
-    sensor_type,
-    alert_level
-  });
+const sensorSchema = new mongoose.Schema({
+sensor_id:String,
+sensor_type:String,
+alert_level:String
+});
 
-  res.send("Sensor Stored");
+const cameraSchema = new mongoose.Schema({
+camera_id:String,
+location:String,
+activity:String
+});
+
+const networkSchema = new mongoose.Schema({
+ip_address:String,
+event_type:String,
+threat_level:String
+});
+
+
+/* Models */
+
+const Sensor = mongoose.model("Sensor",sensorSchema);
+const Camera = mongoose.model("Camera",cameraSchema);
+const Network = mongoose.model("Network",networkSchema);
+
+
+/* SENSOR */
+
+app.post("/sensor", async (req,res)=>{
+
+const {sensor_id,sensor_type,alert_level}=req.body;
+
+const sensor = new Sensor({
+sensor_id,
+sensor_type,
+alert_level
+});
+
+await sensor.save();
+
+res.send("Sensor Stored");
 
 });
 
-/* CAMERA LOG */
+app.get("/sensor-data", async (req,res)=>{
 
-app.post("/camera", (req, res) => {
+const data = await Sensor.find();
 
-  const { camera_id, location, activity } = req.body;
-
-  cameras.push({
-    id: cameras.length + 1,
-    camera_id,
-    location,
-    activity
-  });
-
-  res.send("Camera Stored");
+res.json(data);
 
 });
 
-/* NETWORK EVENT */
 
-app.post("/network", (req, res) => {
+/* CAMERA */
 
-  const { ip_address, event_type, threat_level } = req.body;
+app.post("/camera", async (req,res)=>{
 
-  networks.push({
-    id: networks.length + 1,
-    ip_address,
-    event_type,
-    threat_level
-  });
+const {camera_id,location,activity}=req.body;
 
-  res.send("Network Stored");
+const camera = new Camera({
+camera_id,
+location,
+activity
+});
+
+await camera.save();
+
+res.send("Camera Stored");
 
 });
 
-/* DASHBOARD DATA */
+app.get("/camera-data", async (req,res)=>{
 
-app.get("/dashboard", (req, res) => {
+const data = await Camera.find();
 
-  res.json({
-    sensors: sensors.length,
-    cameras: cameras.length,
-    networks: networks.length
-  });
+res.json(data);
 
 });
 
-/* SENSOR DATA */
 
-app.get("/sensor-data", (req, res) => {
-  res.json(sensors);
+/* NETWORK */
+
+app.post("/network", async (req,res)=>{
+
+const {ip_address,event_type,threat_level}=req.body;
+
+const network = new Network({
+ip_address,
+event_type,
+threat_level
 });
 
-/* CAMERA DATA */
+await network.save();
 
-app.get("/camera-data", (req, res) => {
-  res.json(cameras);
+res.send("Network Stored");
+
 });
 
-/* NETWORK DATA */
+app.get("/network-data", async (req,res)=>{
 
-app.get("/network-data", (req, res) => {
-  res.json(networks);
+const data = await Network.find();
+
+res.json(data);
+
 });
+
+
+/* DASHBOARD */
+
+app.get("/dashboard", async (req,res)=>{
+
+const sensors = await Sensor.countDocuments();
+const cameras = await Camera.countDocuments();
+const networks = await Network.countDocuments();
+
+res.json({
+sensors,
+cameras,
+networks
+});
+
+});
+
 
 /* SERVER */
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+app.listen(PORT,()=>{
+console.log("Server running on port "+PORT);
 });
