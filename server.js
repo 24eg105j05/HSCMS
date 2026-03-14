@@ -8,121 +8,173 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
+/* MYSQL CONNECTION */
+
 const db = mysql.createConnection({
-host:"localhost",
-user:"root",
-password:"Karthik_x25",
-database:"hscms"
+  host: "localhost",
+  user: "root",
+  password: "Karthik_x25",
+  database: "hscms"
 });
 
-db.connect(err=>{
-if(err) throw err;
-console.log("MySQL Connected");
+db.connect((err) => {
+  if (err) {
+    console.log("MySQL connection failed. Running without database.");
+  } else {
+    console.log("MySQL Connected");
+  }
 });
-
 
 /* SENSOR ALERT */
 
-app.post("/sensor",(req,res)=>{
+app.post("/sensor", (req, res) => {
 
-const {sensor_id,sensor_type,alert_level}=req.body;
+  const { sensor_id, sensor_type, alert_level } = req.body;
 
-db.query(
-"INSERT INTO sensors (sensor_id,sensor_type,alert_level) VALUES (?,?,?)",
-[sensor_id,sensor_type,alert_level],
-(err)=>{
-if(err) throw err;
-res.send("Sensor Stored");
-});
+  db.query(
+    "INSERT INTO sensors (sensor_id,sensor_type,alert_level) VALUES (?,?,?)",
+    [sensor_id, sensor_type, alert_level],
+    (err) => {
+
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Database error");
+      }
+
+      res.send("Sensor Stored");
+    }
+  );
 
 });
 
 
 /* CAMERA LOG */
 
-app.post("/camera",(req,res)=>{
+app.post("/camera", (req, res) => {
 
-const {camera_id,location,activity}=req.body;
+  const { camera_id, location, activity } = req.body;
 
-db.query(
-"INSERT INTO cameras (camera_id,location,activity) VALUES (?,?,?)",
-[camera_id,location,activity],
-(err)=>{
-if(err) throw err;
-res.send("Camera Stored");
-});
+  db.query(
+    "INSERT INTO cameras (camera_id,location,activity) VALUES (?,?,?)",
+    [camera_id, location, activity],
+    (err) => {
+
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Database error");
+      }
+
+      res.send("Camera Stored");
+    }
+  );
 
 });
 
 
 /* NETWORK EVENT */
 
-app.post("/network",(req,res)=>{
+app.post("/network", (req, res) => {
 
-const {ip_address,event_type,threat_level}=req.body;
+  const { ip_address, event_type, threat_level } = req.body;
 
-db.query(
-"INSERT INTO network_events (ip_address,event_type,threat_level) VALUES (?,?,?)",
-[ip_address,event_type,threat_level],
-(err)=>{
-if(err) throw err;
-res.send("Network Stored");
-});
+  db.query(
+    "INSERT INTO network_events (ip_address,event_type,threat_level) VALUES (?,?,?)",
+    [ip_address, event_type, threat_level],
+    (err) => {
+
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Database error");
+      }
+
+      res.send("Network Stored");
+    }
+  );
 
 });
 
 
 /* DASHBOARD DATA */
 
-app.get("/dashboard",(req,res)=>{
+app.get("/dashboard", (req, res) => {
 
-db.query(`
-SELECT
-(SELECT COUNT(*) FROM sensors) AS sensors,
-(SELECT COUNT(*) FROM cameras) AS cameras,
-(SELECT COUNT(*) FROM network_events) AS networks
-`,(err,result)=>{
+  db.query(`
+    SELECT
+    (SELECT COUNT(*) FROM sensors) AS sensors,
+    (SELECT COUNT(*) FROM cameras) AS cameras,
+    (SELECT COUNT(*) FROM network_events) AS networks
+  `, (err, result) => {
 
-res.json(result[0]);
+    if (err) {
+      console.log(err);
+      return res.status(500).send("Database error");
+    }
 
-});
+    res.json(result[0]);
+
+  });
 
 });
 
 
 /* SENSOR DATA */
 
-app.get("/sensor-data",(req,res)=>{
+app.get("/sensor-data", (req, res) => {
 
-db.query("SELECT * FROM sensors",(err,result)=>{
-res.json(result);
-});
+  db.query("SELECT * FROM sensors", (err, result) => {
+
+    if (err) {
+      console.log(err);
+      return res.status(500).send("Database error");
+    }
+
+    res.json(result);
+
+  });
 
 });
 
 
 /* CAMERA DATA */
 
-app.get("/camera-data",(req,res)=>{
+app.get("/camera-data", (req, res) => {
 
-db.query("SELECT * FROM cameras",(err,result)=>{
-res.json(result);
-});
+  db.query("SELECT * FROM cameras", (err, result) => {
+
+    if (err) {
+      console.log(err);
+      return res.status(500).send("Database error");
+    }
+
+    res.json(result);
+
+  });
 
 });
 
 
 /* NETWORK DATA */
 
-app.get("/network-data",(req,res)=>{
+app.get("/network-data", (req, res) => {
 
-db.query("SELECT * FROM network_events",(err,result)=>{
-res.json(result);
+  db.query("SELECT * FROM network_events", (err, result) => {
+
+    if (err) {
+      console.log(err);
+      return res.status(500).send("Database error");
+    }
+
+    res.json(result);
+
+  });
+
 });
 
-});
 
+/* SERVER PORT */
 
-app.listen(3000,()=>{
-console.log("Server running on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
