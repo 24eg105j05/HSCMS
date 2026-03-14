@@ -37,7 +37,7 @@ app.post("/camera", (req, res) => {
   const { camera_id, location, activity } = req.body;
 
   cameras.push({
-    id: cameras.length + 1
+    id: cameras.length + 1,
     camera_id,
     location,
     activity
