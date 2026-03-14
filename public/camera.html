@@ -77,7 +77,33 @@
 
 <script>
 
-document.getElementById("cameraForm").addEventListener("submit",async e=>{
+async function loadCameras(){
+
+let res = await fetch("/camera-data");
+
+let data = await res.json();
+
+let table = document.getElementById("cameraTable");
+
+table.innerHTML = "";
+
+data.forEach(camera => {
+
+table.innerHTML += `
+<tr>
+<td>${camera.id}</td>
+<td>${camera.camera_id}</td>
+<td>${camera.location}</td>
+<td>${camera.activity}</td>
+</tr>
+`;
+
+});
+
+}
+
+
+document.getElementById("cameraForm").addEventListener("submit", async e => {
 
 e.preventDefault();
 
@@ -90,45 +116,26 @@ headers:{
 },
 
 body:JSON.stringify({
-camera_id:cameraId.value,
-location:location.value,
-activity:activity.value
+
+camera_id:document.getElementById("cameraId").value,
+location:document.getElementById("location").value,
+activity:document.getElementById("activity").value
+
 })
 
 });
 
+document.getElementById("cameraForm").reset();
+
 loadCameras();
 
 });
 
-
-async function loadCameras(){
-
-let res=await fetch("/camera-data");
-let data=await res.json();
-
-let table=document.getElementById("cameraTable");
-
-table.innerHTML="";
-
-data.forEach(r=>{
-
-table.innerHTML+=`
-<tr>
-<td>${r.id}</td>
-<td>${r.camera_id}</td>
-<td>${r.location}</td>
-<td>${r.activity}</td>
-</tr>
-`;
-
-});
-
-}
 
 loadCameras();
 
 </script>
+
 
 </body>
 </html>

@@ -77,7 +77,33 @@
 
 <script>
 
-document.getElementById("networkForm").addEventListener("submit",async e=>{
+async function loadNetworks(){
+
+let res = await fetch("/network-data");
+
+let data = await res.json();
+
+let table = document.getElementById("networkTable");
+
+table.innerHTML = "";
+
+data.forEach(net => {
+
+table.innerHTML += `
+<tr>
+<td>${net.id}</td>
+<td>${net.ip_address}</td>
+<td>${net.event_type}</td>
+<td>${net.threat_level}</td>
+</tr>
+`;
+
+});
+
+}
+
+
+document.getElementById("networkForm").addEventListener("submit", async e => {
 
 e.preventDefault();
 
@@ -90,45 +116,26 @@ headers:{
 },
 
 body:JSON.stringify({
-ip_address:ip.value,
-event_type:event.value,
-threat_level:level.value
+
+ip_address:document.getElementById("ipAddress").value,
+event_type:document.getElementById("eventType").value,
+threat_level:document.getElementById("threatLevel").value
+
 })
 
 });
 
-loadNetwork();
+document.getElementById("networkForm").reset();
+
+loadNetworks();
 
 });
 
 
-async function loadNetwork(){
-
-let res=await fetch("/network-data");
-let data=await res.json();
-
-let table=document.getElementById("networkTable");
-
-table.innerHTML="";
-
-data.forEach(r=>{
-
-table.innerHTML+=`
-<tr>
-<td>${r.id}</td>
-<td>${r.ip_address}</td>
-<td>${r.event_type}</td>
-<td>${r.threat_level}</td>
-</tr>
-`;
-
-});
-
-}
-
-loadNetwork();
+loadNetworks();
 
 </script>
+
 
 </body>
 </html>
