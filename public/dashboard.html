@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Smart City Security Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark">
+
+<div class="container">
+
+<a class="navbar-brand">Smart City Security System</a>
+
+<div>
+
+<a href="dashboard.html" class="btn btn-outline-light me-2">Dashboard</a>
+<a href="sensor.html" class="btn btn-outline-light me-2">Sensors</a>
+<a href="camera.html" class="btn btn-outline-light me-2">Cameras</a>
+<a href="network.html" class="btn btn-outline-light">Network</a>
+
+</div>
+
+</div>
+
+</nav>
+
+
+<div class="container mt-5">
+
+<h2 class="text-center mb-4">Security Operations Dashboard</h2>
+
+<div class="row">
+
+<div class="col-md-4">
+<div class="card text-white bg-danger shadow">
+<div class="card-body text-center">
+<h2 id="sensorCount">0</h2>
+<p>Sensor Alerts</p>
+</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card text-white bg-success shadow">
+<div class="card-body text-center">
+<h2 id="cameraCount">0</h2>
+<p>Camera Logs</p>
+</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card text-white bg-warning shadow">
+<div class="card-body text-center">
+<h2 id="networkCount">0</h2>
+<p>Network Events</p>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="mt-5">
+
+<canvas id="chart"></canvas>
+
+</div>
+
+</div>
+
+<script>
+
+async function loadDashboard(){
+
+let res=await fetch("/dashboard");
+let data=await res.json();
+
+document.getElementById("sensorCount").innerText=data.sensors;
+document.getElementById("cameraCount").innerText=data.cameras;
+document.getElementById("networkCount").innerText=data.networks;
+
+new Chart(document.getElementById("chart"),{
+
+type:"doughnut",
+
+data:{
+labels:["Sensors","Cameras","Network"],
+datasets:[{
+data:[data.sensors,data.cameras,data.networks]
+}]
+}
+
+});
+
+}
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
