@@ -20,6 +20,7 @@ app.post("/sensor", (req, res) => {
   const { sensor_id, sensor_type, alert_level } = req.body;
 
   sensors.push({
+    id: sensors.length + 1,
     sensor_id,
     sensor_type,
     alert_level
@@ -36,6 +37,7 @@ app.post("/camera", (req, res) => {
   const { camera_id, location, activity } = req.body;
 
   cameras.push({
+    id: cameras.length + 1
     camera_id,
     location,
     activity
@@ -52,6 +54,7 @@ app.post("/network", (req, res) => {
   const { ip_address, event_type, threat_level } = req.body;
 
   networks.push({
+    id: networks.length + 1,
     ip_address,
     event_type,
     threat_level
