@@ -10,20 +10,30 @@ app.use(express.static("public"));
 
 /* MYSQL CONNECTION */
 
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Karthik_x25",
-  database: "hscms"
-});
+let db = null;
 
-db.connect((err) => {
-  if (err) {
-    console.log("MySQL connection failed. Running without database.");
-  } else {
-    console.log("MySQL Connected");
-  }
-});
+try {
+  const mysql = require("mysql2");
+
+  db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "Karthik_x25",
+    database: "hscms"
+  });
+
+  db.connect((err) => {
+    if (err) {
+      console.log("MySQL not available (deployment environment)");
+    } else {
+      console.log("MySQL Connected");
+    }
+  });
+
+} catch (e) {
+  console.log("MySQL module not loaded");
+}
+
 
 /* SENSOR ALERT */
 
