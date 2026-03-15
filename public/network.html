@@ -91,7 +91,7 @@ data.forEach(net => {
 
 table.innerHTML += `
 <tr>
-<td>${net.id}</td>
+<td>${net._id.slice(-6)}</td>
 <td>${net.ip_address}</td>
 <td>${net.event_type}</td>
 <td>${net.threat_level}</td>
