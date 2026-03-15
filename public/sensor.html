@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <title>Sensor Alerts</title>
 <link rel="stylesheet" href="/css/style.css">
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
 
@@ -55,16 +54,16 @@
 
 </div>
 
-<script>
 
+<script>
 
 async function loadSensors(){
 
-let res = await fetch("/sensor-data");
+const res = await fetch("/sensor-data");
 
-let data = await res.json();
+const data = await res.json();
 
-let table = document.getElementById("sensorTable");
+const table = document.getElementById("sensorTable");
 
 table.innerHTML = "";
 
@@ -72,7 +71,7 @@ data.forEach(sensor => {
 
 table.innerHTML += `
 <tr>
-<td>${sensor.id}</td>
+<td>${sensor._id}</td>
 <td>${sensor.sensor_id}</td>
 <td>${sensor.sensor_type}</td>
 <td>${sensor.alert_level}</td>
@@ -82,7 +81,6 @@ table.innerHTML += `
 });
 
 }
-
 
 
 document.getElementById("sensorForm").addEventListener("submit", async e => {
@@ -107,7 +105,6 @@ alert_level:document.getElementById("alertLevel").value
 
 });
 
-
 document.getElementById("sensorForm").reset();
 
 loadSensors();
@@ -120,5 +117,4 @@ loadSensors();
 </script>
 
 </body>
-
 </html>
