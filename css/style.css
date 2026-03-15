@@ -1,46 +1,20 @@
 body{
-background: linear-gradient(135deg,#1f2933,#111827);
+background:#0f172a;
 color:white;
-font-family: 'Segoe UI', sans-serif;
-min-height:100vh;
+font-family:Arial, Helvetica, sans-serif;
 }
 
 .navbar{
-background:#111827;
-padding:12px;
-}
-
-.navbar-brand{
-font-weight:600;
-}
-
-.container{
-max-width:1100px;
+background:#020617;
 }
 
 .card{
 border:none;
-border-radius:12px;
+border-radius:10px;
 }
 
-.card-body{
-padding:25px;
-}
-
-form.card{
-background:white;
-color:black;
-}
-
-form input,
-form select{
-border-radius:8px;
-}
-
-.btn{
-border-radius:8px;
-padding:8px 18px;
-font-weight:500;
+.alert{
+font-weight:bold;
 }
 
 table{
@@ -50,20 +24,10 @@ border-radius:10px;
 overflow:hidden;
 }
 
-thead{
-background:#111827;
-color:white;
+.btn{
+border-radius:6px;
 }
 
-table th,
-table td{
-vertical-align:middle;
-}
-
-h1,h2,h3{
+h2,h3,h4{
 font-weight:600;
-}
-
-.shadow{
-box-shadow:0 6px 20px rgba(0,0,0,0.25) !important;
 }

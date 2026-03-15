@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <title>Smart City Security Dashboard</title>
@@ -18,7 +19,7 @@
 
 <div class="container">
 
-<a class="navbar-brand">Smart City Security System</a>
+<a class="navbar-brand">Smart City Security Operations Center</a>
 
 <div>
 
@@ -36,76 +37,200 @@
 
 <div class="container mt-5">
 
-<h2 class="text-center mb-4">Security Operations Dashboard</h2>
+<div class="alert alert-danger text-center">
+
+⚠ Critical Threat Monitoring Active
+
+</div>
+
+
+<div class="row text-center mb-4">
+
+<div class="col-md-4">
+
+<div class="card shadow p-4 bg-danger text-white">
+
+<h2 id="sensorCount">0</h2>
+<p>Sensor Alerts</p>
+
+</div>
+
+</div>
+
+
+<div class="col-md-4">
+
+<div class="card shadow p-4 bg-success text-white">
+
+<h2 id="cameraCount">0</h2>
+<p>Camera Logs</p>
+
+</div>
+
+</div>
+
+
+<div class="col-md-4">
+
+<div class="card shadow p-4 bg-warning text-dark">
+
+<h2 id="networkCount">0</h2>
+<p>Network Events</p>
+
+</div>
+
+</div>
+
+</div>
+
+
 
 <div class="row">
 
-<div class="col-md-4">
-<div class="card text-white bg-danger shadow">
-<div class="card-body text-center">
-<h2 id="sensorCount">0</h2>
-<p>Sensor Alerts</p>
-</div>
-</div>
-</div>
+<div class="col-md-6">
 
-<div class="col-md-4">
-<div class="card text-white bg-success shadow">
-<div class="card-body text-center">
-<h2 id="cameraCount">0</h2>
-<p>Camera Logs</p>
-</div>
-</div>
-</div>
+<div class="card shadow p-4">
 
-<div class="col-md-4">
-<div class="card text-white bg-warning shadow">
-<div class="card-body text-center">
-<h2 id="networkCount">0</h2>
-<p>Network Events</p>
-</div>
-</div>
-</div>
+<h4>Threat Analytics</h4>
 
-</div>
-
-<div class="mt-5">
-
-<canvas id="chart"></canvas>
+<canvas id="threatChart"></canvas>
 
 </div>
 
 </div>
+
+
+
+<div class="col-md-6">
+
+<div class="card shadow p-4">
+
+<h4>System Modules</h4>
+
+<ul class="list-group">
+
+<li class="list-group-item">Sensor Monitoring</li>
+<li class="list-group-item">Camera Surveillance</li>
+<li class="list-group-item">Network Intrusion Detection</li>
+<li class="list-group-item">Real-Time Threat Analysis</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ✅ LIVE THREAT FEED ADDED HERE -->
+
+<div class="row mt-4">
+
+<div class="col-md-12">
+
+<div class="card shadow p-4">
+
+<h4>Live Threat Feed</h4>
+
+<table class="table table-striped">
+
+<thead>
+
+<tr>
+<th>Time</th>
+<th>System</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody id="threatFeed"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
 
 <script>
 
 async function loadDashboard(){
 
-let res=await fetch("/dashboard");
-let data=await res.json();
+let res = await fetch("/dashboard");
 
-document.getElementById("sensorCount").innerText=data.sensors;
-document.getElementById("cameraCount").innerText=data.cameras;
-document.getElementById("networkCount").innerText=data.networks;
+let data = await res.json();
 
-new Chart(document.getElementById("chart"),{
+document.getElementById("sensorCount").innerText = data.sensors;
+document.getElementById("cameraCount").innerText = data.cameras;
+document.getElementById("networkCount").innerText = data.networks;
 
+const ctx = document.getElementById("threatChart");
+
+new Chart(ctx,{
 type:"doughnut",
-
 data:{
-labels:["Sensors","Cameras","Network"],
+labels:["Sensors","Cameras","Network Events"],
 datasets:[{
 data:[data.sensors,data.cameras,data.networks]
 }]
 }
-
 });
 
 }
 
+
+/* LIVE THREAT FEED */
+
+function loadThreatFeed(){
+
+const table = document.getElementById("threatFeed");
+
+const time = new Date().toLocaleTimeString();
+
+table.innerHTML = `
+<tr>
+<td>${time}</td>
+<td>Sensor Monitoring</td>
+<td class="text-danger">Alert Detected</td>
+</tr>
+
+<tr>
+<td>${time}</td>
+<td>Camera Surveillance</td>
+<td class="text-success">Normal Activity</td>
+</tr>
+
+<tr>
+<td>${time}</td>
+<td>Network IDS</td>
+<td class="text-warning">Suspicious Traffic</td>
+</tr>
+`;
+
+}
+
+
 loadDashboard();
+loadThreatFeed();
+
+
+/* AUTO REFRESH EVERY 5 SECONDS */
+
+setInterval(()=>{
+loadDashboard();
+loadThreatFeed();
+},5000);
 
 </script>
 
+
 </body>
+
 </html>

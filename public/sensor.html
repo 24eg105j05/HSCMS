@@ -94,7 +94,7 @@ data.forEach(sensor => {
 
 table.innerHTML += `
 <tr>
-<td>${sensor._id}</td>
+<td>${sensor._id.slice(-6)}</td>
 <td>${sensor.sensor_id}</td>
 <td>${sensor.sensor_type}</td>
 <td>${sensor.alert_level}</td>
