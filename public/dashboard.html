@@ -188,31 +188,55 @@ data:[data.sensors,data.cameras,data.networks]
 
 /* LIVE THREAT FEED */
 
-function loadThreatFeed(){
+async function loadThreatFeed(){
+
+const sensor = await fetch("/sensor-data");
+const camera = await fetch("/camera-data");
+const network = await fetch("/network-data");
+
+const sensors = await sensor.json();
+const cameras = await camera.json();
+const networks = await network.json();
 
 const table = document.getElementById("threatFeed");
 
-const time = new Date().toLocaleTimeString();
+table.innerHTML = "";
 
-table.innerHTML = `
+if(sensors.length > 0){
+
+table.innerHTML += `
 <tr>
-<td>${time}</td>
+<td>${new Date().toLocaleTimeString()}</td>
 <td>Sensor Monitoring</td>
-<td class="text-danger">Alert Detected</td>
-</tr>
-
-<tr>
-<td>${time}</td>
-<td>Camera Surveillance</td>
-<td class="text-success">Normal Activity</td>
-</tr>
-
-<tr>
-<td>${time}</td>
-<td>Network IDS</td>
-<td class="text-warning">Suspicious Traffic</td>
+<td class="text-danger">${sensors[sensors.length-1].alert_level}</td>
 </tr>
 `;
+
+}
+
+if(cameras.length > 0){
+
+table.innerHTML += `
+<tr>
+<td>${new Date().toLocaleTimeString()}</td>
+<td>Camera Surveillance</td>
+<td class="text-success">${cameras[cameras.length-1].activity}</td>
+</tr>
+`;
+
+}
+
+if(networks.length > 0){
+
+table.innerHTML += `
+<tr>
+<td>${new Date().toLocaleTimeString()}</td>
+<td>Network IDS</td>
+<td class="text-warning">${networks[networks.length-1].threat_level}</td>
+</tr>
+`;
+
+}
 
 }
 
